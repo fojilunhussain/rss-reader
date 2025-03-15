@@ -25,21 +25,25 @@ def create_table(entries, selected_index):
     table = Table(title="🎧 Latest Podcast Episodes", box=box.SIMPLE)
 
     table.add_column("Index", justify="center", style="cyan", no_wrap=True)
-    table.add_column("Title", style="magenta", min_width=60)
-    table.add_column("Published", style="green")
+    table.add_column("Title", style="magenta", min_width=40)
+    table.add_column("Published", style="green", min_width=20)
+    table.add_column("Author", style="yellow", min_width=20)
 
     for i, entry in enumerate(entries):
+        author = entry.get("author", "Unknown")
         if i == selected_index:
             table.add_row(
                 f"[reverse]{i + 1}[/reverse]",
                 f"[reverse]{entry.title}[/reverse]",
-                f"[reverse]{entry.published}[/reverse]"
+                f"[reverse]{entry.published}[/reverse]",
+                f"[reverse]{author}[/reverse]"
             )
         else:
             table.add_row(
                 f"{i + 1}",
                 entry.title,
-                entry.published
+                entry.published,
+                author
             )
 
     return table
@@ -83,12 +87,12 @@ def main():
 
         key = get_key()
 
-        if key == '\x1b':
+        if key == '\x1b':  # Arrow keys
             key += get_key()
             key += get_key()
-            if key == '\x1b[A':
+            if key == '\x1b[A':  # Up arrow
                 selected_index = (selected_index - 1) % len(entries)
-            elif key == '\x1b[B':
+            elif key == '\x1b[B':  # Down arrow
                 selected_index = (selected_index + 1) % len(entries)
         elif key == 's':
             selected_entry = entries[selected_index]
