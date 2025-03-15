@@ -1,22 +1,26 @@
-from flask import Flask, render_template, request
+#!/usr/bin/env python
+
 import feedparser
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-app = Flask(__name__)
+rss_url = os.getenv('TRAINER_RSS')
 
-app.config['TRAINER_RSS'] = os.getenv('TRAINER_RSS')
+def fetch_podcast():
+    feed = feedparser.parse(rss_url)
+    return feed.entries
 
-FEEDS = {
-    'trainer': app.config['TRAINER_RSS']
-}
+def display_podcasts():
+    podcasts = fetch_podcast()
+    
+    print("Latest Podcast Episodes:")
+    for idx, entry in enumerate(podcasts, start=1):
+        print(f"{idx}. {entry.title}")
+        print(f"   {entry.link}")
+        print(f"   {entry.published}")
+        print()
 
-@app.route('/')
-def home():
-    feed = feedparser.parse(FEEDS['trainer'])
-    return render_template('home.html', entries=feed.entries)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    display_podcasts()
